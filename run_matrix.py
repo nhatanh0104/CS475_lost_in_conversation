@@ -14,12 +14,13 @@ def run_experiment(dataset_path, is_code=False, sample_limit=20):
         data = json.load(f)[:sample_limit]
         
     client = ModelClient(use_local=True)
-    regimes = ["uniform", "early", "mid", "late"]
+    regimes = ["not-sharded", "uniform", "early", "mid", "late"]
     results = {r: [] for r in regimes}
 
     for idx, item in enumerate(data):
         shards = item.get("shards_6", item.get("shards", []))[:6]
-        gold = item.get("answer", item.get("gold_answer", ""))
+        gold = str(item.get("answer", item.get("gold_answer", "")))
+        gold = gold.split("####")[-1].strip().replace(",", "")
         test_case = item.get("test", "")
 
         for regime in regimes:
@@ -53,6 +54,6 @@ def run_experiment(dataset_path, is_code=False, sample_limit=20):
     print(f"Results saved to {out_file}")
 
 if __name__ == "__main__":
-    if os.path.exists("data_filtered/gsm8k_60.json"):
+    if os.path.exists("data_filtered/gsm8k_filtered_6shards.json"):
         print("Starting 50% Matrix Evaluation on GSM8K...")
-        run_experiment("data_filtered/gsm8k_60.json", is_code=False, sample_limit=30)
+        run_experiment("data_filtered/gsm8k_filtered_6shards.json", is_code=False, sample_limit=30)

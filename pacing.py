@@ -26,6 +26,9 @@ def generate_pacing(shards, regime="early"):
     elif regime == "uniform":
         # Turn 1: 2 shards | Turn 2: 2 shards | Turn 3: 1 shard | Turn 4: 1 shard
         splits = [s[0:2], s[2:4], [s[4]], [s[5]]]
+    elif regime == "not-sharded":
+        # All shards in one turn
+        splits = [s]  
     else:
         raise ValueError(f"Unknown regime: {regime}")
         
